@@ -4,7 +4,7 @@
   "main": "src/app.ts ",
   "scripts": {
     "start": "ts-node src/app.ts",
-    "dev": "ts-node-dev --transpile-only -poll src/app.ts",
+    "dev": "ts-node-dev --transpile-only --poll src/app.ts",
     "lint": "prettier --write .  "
   },
   "keywords": [],
@@ -14,10 +14,11 @@
   "dependencies": {
     "@types/body-parser": "^1.19.6",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3",  
+    "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "body-parser": "^2.2.0",
     "consola": "^3.4.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
