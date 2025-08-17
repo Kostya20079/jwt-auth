@@ -3,10 +3,12 @@ import consola, { ConsolaInstance } from "consola";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
 
 export class Server {
   public app: express.Application;
   public logger: ConsolaInstance = consola;
+  private prisma: PrismaClient = new PrismaClient();
 
   public constructor() {
     this.app = express();
@@ -40,5 +42,17 @@ export class Server {
     this.app.get("/", (req, res) => {
       res.json({ success: true, message: "JWT authentication" });
     });
+  }
+
+  public async sendQuery(): Promise<void> {
+    const result = await this.prisma.test.create({
+      data: {
+        id: 1,
+        key: "value1",
+        key2: "value2",
+      },
+    });
+
+    console.log("Query result: " + result);
   }
 }
