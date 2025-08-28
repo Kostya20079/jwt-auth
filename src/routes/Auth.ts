@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import argon2 from "argon2";
 
 export const auth = Router();
 const prisma = new PrismaClient();
-const JWT_SECRET = "";
+const JWT_SECRET = ""; // secret jwt code
 
 auth.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -20,7 +21,7 @@ auth.post("/login", async (req, res) => {
   }
 
   try {
-    if (password == user.password) {
+    if (await argon2.verify(user.password, password)) {
       const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET);
       return res.status(200).json({ access: true, accessToken: accessToken });
     } else {
@@ -53,13 +54,16 @@ auth.post("/register", async (req, res) => {
     return res.status(400).json({ access: false, message: "User Exists" });
   }
 
+  // hashing password with argon2
+  const hashedPassword = await argon2.hash(password);
+
   try {
     // creating user
     const user = await prisma.user.create({
       data: {
         username: username,
         email: email,
-        password: password,
+        password: hashedPassword,
       },
     });
 
@@ -69,6 +73,8 @@ auth.post("/register", async (req, res) => {
     return res.status(200).json({ access: true, accessToken: accessToken });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ access: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ access: false, message: "Internal Server Error" });
   }
 });
